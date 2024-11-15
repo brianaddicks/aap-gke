@@ -2,7 +2,7 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: CatalogSource
 metadata:
   name: aap-catalog
-  namespace: operators
+  namespace: olm
 spec:
   sourceType: grpc
   secrets:

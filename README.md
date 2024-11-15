@@ -4,7 +4,25 @@
 
 Created VPC, and subnet
 Created GKE
-Install Google Cloud CLI and kubectl and  gke-gcloud-auth-plugin and opm
+
+# Install prereqs
+```
+# google cloud repo
+sudo tee -a /etc/yum.repos.d/google-cloud-sdk.repo << EOM
+[google-cloud-cli]
+name=Google Cloud CLI
+baseurl=https://packages.cloud.google.com/yum/repos/cloud-sdk-el9-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOM
+
+# install google-cloud-cli kubectl, gke auth plugin
+sudo dnf -y install google-cloud-cli kubectl google-cloud-sdk-gke-gcloud-auth-plugin
+```
+Install OPM
+https://docs.openshift.com/container-platform/4.17/cli_reference/opm/cli-opm-install.html
 
 ## Connect to cluster
 ```
@@ -13,10 +31,7 @@ gcloud container clusters get-credentials ${GKE_CLUSTER_NAME} --region ${GKE_REG
 
 ## Install OLM
 
-kubectl create -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/v0.30.0/crds.yaml
-
-
-kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/v0.30.0/olm.yaml
+https://olm.operatorframework.io/docs/getting-started/
 
 ## Create a Catalog
 
@@ -48,27 +63,28 @@ podman build . \
     -t quay.io/rh_ee_baddicks/aap-catalog:latest
 podman push quay.io/rh_ee_baddicks/aap-catalog:latest
 ```
-## Make Catalog available on Cluster
-
-```
-kubectl apply -f CatalogSource.yaml -n operators
-
-# List available packages
-kubectl get packagemanifest -n operators
-```
-## Install Operator
-
-```
-kubectl apply -f OperatorGroup.yaml -n operators
-kubectl apply -f Subscription.yaml -n operators
-```
-
-Should be able to approve an Install Plan at this point, but it's no showing up.
 
 ## Create secret for RH registry pulls
 
 ```
 kubectl create secret generic rhregistry \
 --from-file=.dockerconfigjson=${XDG_RUNTIME_DIR}/containers/auth.json \
---type=kubernetes.io/dockerconfigjson
+--type=kubernetes.io/dockerconfigjson -n olm
 ```
+
+## Make Catalog available on Cluster
+
+```
+kubectl apply -f CatalogSource.yaml -n olm
+
+# List available packages
+kubectl get packagemanifest -n olm
+```
+## Install Operator
+
+```
+kubectl apply -f OperatorGroup.yaml -n olm
+kubectl apply -f Subscription.yaml -n olm
+```
+
+Should be able to approve an Install Plan at this point, but it's not showing up.
