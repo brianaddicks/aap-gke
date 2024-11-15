@@ -76,6 +76,13 @@ podman push quay.io/rh_ee_baddicks/aap-catalog:latest
 kubectl create secret generic rhregistry \
 --from-file=.dockerconfigjson=${XDG_RUNTIME_DIR}/containers/auth.json \
 --type=kubernetes.io/dockerconfigjson -n olm
+
+kubectl create secret generic redhat-operators-pull-secret \
+--from-file=.dockerconfigjson=${XDG_RUNTIME_DIR}/containers/auth.json \
+--type=kubernetes.io/dockerconfigjson -n aap-op
+
+kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "redhat-operators-pull-secret"}]}' -n
+aap-op
 ```
 
 ## Make Catalog available on Cluster
@@ -90,7 +97,7 @@ kubectl get packagemanifest -n olm
 
 ```
 kubectl apply -f OperatorGroup.yaml -n olm
-kubectl apply -f Subscription.yaml -n olm
+kubectl apply -f Subscription.yaml -n aap-op
 ```
 
 Should be able to approve an Install Plan at this point, but it's not showing up.
