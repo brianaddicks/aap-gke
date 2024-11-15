@@ -1,0 +1,11 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: sub-ansible-automation-platform-operator
+  namespace: aap-op
+spec:
+  channel: stable-2.5
+  name: ansible-automation-platform-operator
+  source: aap-catalog
+  sourceNamespace: operators
+  installPlanApproval: Manual

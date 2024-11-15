@@ -1,0 +1,15 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: aap-catalog
+  namespace: operators
+spec:
+  sourceType: grpc
+  secrets:
+    - 'rhregistry'
+  image: quay.io/rh_ee_baddicks/aap-catalog:latest
+  displayName: AAP Catalog
+  publisher: Brian Addicks
+  updateStrategy:
+    registryPoll:
+      interval: 10m
