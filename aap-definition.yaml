@@ -4,7 +4,7 @@ metadata:
   name: ansible
   namespace: aap-op
 spec:
-  route_tls_termination_mechanism: Edge
+  route_tls_termination_mechanism: Passthrough
   no_log: true
   redis_mode: standalone
   api:
