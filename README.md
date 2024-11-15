@@ -21,8 +21,14 @@ EOM
 # install google-cloud-cli kubectl, gke auth plugin
 sudo dnf -y install google-cloud-cli kubectl google-cloud-sdk-gke-gcloud-auth-plugin
 ```
-Install OPM
+
+## Install OPM
+
 https://docs.openshift.com/container-platform/4.17/cli_reference/opm/cli-opm-install.html
+
+```
+operator-sdk olm install --timeout=30m0s
+```
 
 ## Connect to cluster
 ```
