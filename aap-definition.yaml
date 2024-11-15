@@ -1,0 +1,23 @@
+apiVersion: aap.ansible.com/v1alpha1
+kind: AnsibleAutomationPlatform
+metadata:
+  name: ansible
+  namespace: aap-op
+spec:
+  route_tls_termination_mechanism: Edge
+  no_log: true
+  redis_mode: standalone
+  api:
+    log_level: INFO
+    replicas: 1
+  database:
+    postgres_data_volume_init: true
+    postgres_init_container_commands: |
+      chown 26:0 /var/lib/pgsql/data
+      chmod 700 /var/lib/pgsql/data
+  controller:
+    disabled: false
+  eda:
+    disabled: true
+  hub:
+    disabled: true
