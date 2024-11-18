@@ -10,7 +10,7 @@ spec:
   admin_user: admin
   service_type: NodePort
   image_pull_policy: IfNotPresent
-  postgres_data_volume_init: true
-  postgres_init_container_commands: |
-    chown 26:0 /var/lib/pgsql/data
-    chmod 700 /var/lib/pgsql/data
+  security_context_settings:
+    fsGroup: 0
+    runAsGroup: 0
+    runAsUser: 996
