@@ -58,6 +58,9 @@ opm init ansible-automation-platform-operator \
 opm render registry.redhat.io/ansible-automation-platform/platform-operator-bundle:2.5-883 \
     --output=yaml >> aap-catalog/ansible-automation-platform-operator.yaml
 
+opm render registry.redhat.io/ansible-automation-platform/platform-operator-bundle:2.4-2119 \
+    --output=yaml >> aap-catalog/ansible-automation-platform-operator.yaml
+
 cat << EOF >> cool-catalog/ansible-automation-platform-operator.yaml
 ---
 schema: olm.channel
