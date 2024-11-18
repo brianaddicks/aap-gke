@@ -150,12 +150,12 @@ Create ingress
 kubectl apply -f ingress.yaml
 ```
 
-Get URL address
+Get URL address (this will take a minute as the ingress is created)
 ```
 kubectl get ingress ansible -n aap-op
 ```
 
-Wait for Ingress to be available. Then get the secret
+Wait for Ingress to be available (this will take a few minutes). Then get the secret
 
 ```
 kubectl get secret ansible-controller-admin-password -o jsonpath="{.data.password}" -n aap-op | base64 --decode ; echo
