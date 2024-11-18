@@ -89,6 +89,7 @@ kubectl create secret generic redhat-operators-pull-secret \
 --type=kubernetes.io/dockerconfigjson -n aap-op
 
 kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "redhat-operators-pull-secret"}]}' -n aap-op
+kubectl patch serviceaccount ansible-gateway -p '{"imagePullSecrets": [{"name": "redhat-operators-pull-secret"}]}' -n aap-op
 ```
 
 ## Make Catalog available on Cluster
@@ -115,8 +116,7 @@ kubectl apply -f aap-definition.yaml
 ## Patch postgres
 
 ```
-securityContext:
-  fsGroup: 26
+kubectl patch statefulset.apps/ansible-postgres-15 -p '{"spec":{"template":{"spec":{"containers":[{"name":"postgres","securityContext":{"fsGroup":26}}]}}}}' -n aap-op
 ```
 
 Should be able to approve an Install Plan at this point, but it's not showing up.
