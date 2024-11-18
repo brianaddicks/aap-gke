@@ -113,7 +113,13 @@ kubectl apply -f Subscription.yaml -n aap-op
 ## Create AAP Instance
 
 ```
+# 2.5
 kubectl apply -f aap-definition.yaml
+```
+
+```
+# 2.4
+kubectl apply -f aap2.4-definition.yaml
 ```
 
 ## Patch postgres
@@ -128,4 +134,24 @@ kubectl patch statefulset.apps/ansible-postgres-15 -p '{"spec":{"template":{"spe
 kubectl patch statefulset.apps/ansible-controller-postgres-13 -p '{"spec":{"template":{"spec":{"containers":[{"name":"postgres","securityContext":{"fsGroup":26}}]}}}}' -n aap-op
 ```
 
-Should be able to approve an Install Plan at this point, but it's not showing up.
+Once all pods are running verify by using:
+
+```
+kubectl get pods -n aap-op
+```
+
+Create Service
+```
+kubectl expose deployment ansible-controller-web --name ansible-controller-web-svc --type NodePort -n aap-op
+```
+
+Create ingress
+```
+kubectl apply -f ingress.yaml
+```
+
+Wait for AAP to fully come up and the Ingress to be available. Then get the secret
+
+```
+kubectl get secret ansible-controller-admin-password -o jsonpath="{.data.password}" -n aap-op | base64 --decode ; echo
+```
