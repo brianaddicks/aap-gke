@@ -78,6 +78,8 @@ podman push quay.io/rh_ee_baddicks/aap-catalog:latest
 ## Create secret for RH registry pulls
 
 ```
+kubectl create namespace aap-op
+
 kubectl create secret generic rhregistry \
 --from-file=.dockerconfigjson=${XDG_RUNTIME_DIR}/containers/auth.json \
 --type=kubernetes.io/dockerconfigjson -n olm
@@ -86,8 +88,7 @@ kubectl create secret generic redhat-operators-pull-secret \
 --from-file=.dockerconfigjson=${XDG_RUNTIME_DIR}/containers/auth.json \
 --type=kubernetes.io/dockerconfigjson -n aap-op
 
-kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "redhat-operators-pull-secret"}]}' -n
-aap-op
+kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "redhat-operators-pull-secret"}]}' -n aap-op
 ```
 
 ## Make Catalog available on Cluster
@@ -96,7 +97,7 @@ aap-op
 kubectl apply -f CatalogSource.yaml -n olm
 
 # List available packages
-kubectl get packagemanifest -n olm
+kubectl get packagemanifest -n olm | grep AAP
 ```
 ## Install Operator
 
