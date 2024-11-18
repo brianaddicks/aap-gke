@@ -1,5 +1,9 @@
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
-  name: og-group
-  namespace: aap-op
+  name: olm-operators
+  namespace: olm
+spec:
+  targetNamespaces:
+    - olm
+    - aap-op
