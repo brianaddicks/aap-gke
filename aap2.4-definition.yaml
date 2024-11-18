@@ -1,0 +1,16 @@
+apiVersion: automationcontroller.ansible.com/v1beta1
+kind: AutomationController
+metadata:
+  name: ansible-controller
+  namespace: aap-op
+spec:
+  no_log: true
+  garbage_collect_secrets: true
+  ingress_type: none
+  admin_user: admin
+  service_type: NodePort
+  image_pull_policy: IfNotPresent
+  postgres_data_volume_init: true
+  postgres_init_container_commands: |
+    chown 26:0 /var/lib/pgsql/data
+    chmod 700 /var/lib/pgsql/data
