@@ -8,4 +8,4 @@ spec:
   name: ansible-automation-platform-operator
   source: aap-catalog
   sourceNamespace: olm
-  installPlanApproval: Manual
+  installPlanApproval: Automatic

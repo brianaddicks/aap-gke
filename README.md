@@ -102,8 +102,14 @@ kubectl get packagemanifest -n olm | grep AAP
 ## Install Operator
 
 ```
-kubectl apply -f OperatorGroup.yaml -n olm
+kubectl apply -f OperatorGroup.yaml -n aap-op
 kubectl apply -f Subscription.yaml -n aap-op
+```
+
+## Create AAP Instance
+
+```
+kubectl apply -f aap-definition.yaml
 ```
 
 ## Patch postgres
