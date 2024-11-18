@@ -4,8 +4,7 @@ metadata:
   name: ansible
   namespace: aap-op
 spec:
-  service_type: LoadBalancer
-  ingress_type: Ingress
+  service_type: NodePort
   no_log: true
   redis_mode: standalone
   api:
@@ -22,3 +21,4 @@ spec:
     disabled: true
   hub:
     disabled: true
+~                    
