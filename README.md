@@ -119,7 +119,13 @@ kubectl apply -f aap-definition.yaml
 ## Patch postgres
 
 ```
+kubectl patch serviceaccount ansible-controller -p '{"imagePullSecrets": [{"name": "redhat-operators-pull-secret"}]}' -n aap-op
+
+# 2.5
 kubectl patch statefulset.apps/ansible-postgres-15 -p '{"spec":{"template":{"spec":{"containers":[{"name":"postgres","securityContext":{"fsGroup":26}}]}}}}' -n aap-op
+
+# 2.4
+kubectl patch statefulset.apps/ansible-controller-postgres-13 -p '{"spec":{"template":{"spec":{"containers":[{"name":"postgres","securityContext":{"fsGroup":26}}]}}}}' -n aap-op
 ```
 
 Should be able to approve an Install Plan at this point, but it's not showing up.
