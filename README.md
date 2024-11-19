@@ -134,34 +134,34 @@ kubectl patch statefulset.apps/ansible-postgres-15 -p '{"spec":{"template":{"spe
 kubectl patch statefulset.apps/ansible-controller-postgres-13 -p '{"spec":{"template":{"spec":{"containers":[{"name":"postgres","securityContext":{"fsGroup":26}}]}}}}' -n aap-op
 ```
 
-Once all pods are running verify by using:
+## Once all pods are running verify by using:
 
 ```
 kubectl get pods -n aap-op
 ```
 
-Create Service
+## Create Service
 ```
 kubectl expose deployment ansible-controller-web --name ansible-controller-web-svc --type NodePort -n aap-op
 ```
 
-Create ingress
+## Create ingress
 ```
 kubectl apply -f ingress.yaml
 ```
 
-Get URL address (this will take a minute as the ingress is created)
+## Get URL address (this will take a minute as the ingress is created)
 ```
 kubectl get ingress controller -n aap-op
 ```
 
-Wait for Ingress to be available (this will take a few minutes). Then get the secret
+## Wait for Ingress to be available (this will take a few minutes). Then get the secret
 
 ```
 kubectl get secret ansible-controller-admin-password -o jsonpath="{.data.password}" -n aap-op | base64 --decode ; echo
 ```
 
-Install Automation Hub
+# Install Automation Hub
 
 Cloud Filestore API Enabled, Filestore CSI enabled for cluster
 
@@ -170,7 +170,7 @@ Create filestore with network if no default exists
 kubectl apply -f filestore-example-class.yaml
 ```
 
-Deploy Automation Hub
+## Deploy Automation Hub
 ```
 kubectl apply -f hub.yaml
 ```
