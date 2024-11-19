@@ -206,3 +206,35 @@ kubectl get ingress hub -n aap-op
 kubectl get secret automationhub-admin-password -o jsonpath="{.data.password}" -n aap-op | base64 --decode ; echo
 ```
 
+## Deploy Automation EDA Controller
+```
+kubectl apply -f eda.yaml
+```
+
+## Patch postgres
+```
+kubectl patch statefulset.apps/eda-postgres-13 -p '{"spec":{"template":{"spec":{"securityContext":{"fsGroup":26}}}}}' -n aap-op
+```
+
+## Patch eda service account
+
+```
+kubectl patch serviceaccount eda -p '{"imagePullSecrets": [{"name": "redhat-operators-pull-secret"}]}' -n aap-op
+```
+
+Allow Deployment to fully complete
+
+
+## Add Ingress
+```
+kubectl apply -f ingress-eda.yaml
+```
+## Get URL address (this will take a minute as the ingress is created)
+```
+kubectl get ingress eda -n aap-op
+```
+## Get Automation EDA Secret
+```
+kubectl get secret eda-admin-password -o jsonpath="{.data.password}" -n aap-op | base64 --decode ; echo
+```
+
