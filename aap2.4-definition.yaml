@@ -10,6 +10,8 @@ spec:
   admin_user: admin
   service_type: NodePort
   image_pull_policy: IfNotPresent
+  image_pull_secrets:
+    - redhat-operators-pull-secret
   security_context_settings:
     fsGroup: 0
     runAsGroup: 0
