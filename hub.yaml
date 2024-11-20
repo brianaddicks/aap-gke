@@ -9,7 +9,7 @@ spec:
   gunicorn_api_workers: 2
   ingress_type: NodePort
   no_log: true
-  file_storage_size: 100Gi
+  file_storage_size: 10Gi
   image_pull_policy: IfNotPresent
   nginx_proxy_read_timeout: 120s
   gunicorn_timeout: 90
