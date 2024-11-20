@@ -4,7 +4,7 @@ metadata:
   name: eda
   namespace: aap-op
 spec:
-  ingress_type: none
+  ingress_type: ingress
   no_log: true
   activation_worker:
     replicas: 5
