@@ -138,19 +138,9 @@ kubectl patch statefulset.apps/ansible-controller-postgres-13 -p '{"spec":{"temp
 kubectl get pods -n aap-op
 ```
 
-## Create Service
-```
-kubectl expose deployment ansible-controller-web --name ansible-controller-web-svc --type NodePort -n aap-op
-```
-
-## Create ingress
-```
-kubectl apply -f ingress.yaml
-```
-
 ## Get URL address (this will take a minute as the ingress is created)
 ```
-kubectl get ingress controller -n aap-op
+kubectl get ingress ansible-controller-ingress -n aap-op
 ```
 
 ## Wait for Ingress to be available (this will take a few minutes). Then get the secret
@@ -210,13 +200,9 @@ kubectl patch statefulset.apps/eda-postgres-13 -p '{"spec":{"template":{"spec":{
 
 Allow Deployment to fully complete
 
-## Add Ingress
-```
-kubectl apply -f ingress-eda.yaml
-```
 ## Get URL address (this will take a minute as the ingress is created)
 ```
-kubectl get ingress eda -n aap-op
+kubectl get ingress eda-ingress -n aap-op
 ```
 ## Get Automation EDA Secret
 ```
