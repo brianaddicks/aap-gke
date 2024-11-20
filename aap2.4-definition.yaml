@@ -6,7 +6,7 @@ metadata:
 spec:
   no_log: true
   garbage_collect_secrets: true
-  ingress_type: none
+  ingress_type: ingress
   admin_user: admin
   service_type: NodePort
   image_pull_policy: IfNotPresent
