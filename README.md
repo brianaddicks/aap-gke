@@ -110,6 +110,22 @@ kubectl apply -f OperatorGroup.yaml -n aap-op
 kubectl apply -f Subscription.yaml -n aap-op
 ```
 
+## Optional (Create Cloud SQL Instance)
+
+```
+export GKE_DB_VERSION=POSTGRES_13
+
+gcloud services enable sqladmin.googleapis.com
+
+gcloud sql instances create ${GKE_DB_INSTANCE} \
+    --database-version=${GKE_DB_VERSION} \
+    --cpu=2 \
+    --memory=8GiB \
+    --region=${GKE_REGION} \
+    --root-password=${GKE_DB_ROOT_PASSWORD} \
+    --project=${GKE_PROJECT}
+```
+
 ## Create AAP Instance
 
 ```
