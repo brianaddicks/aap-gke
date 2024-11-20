@@ -11,6 +11,8 @@ spec:
   no_log: true
   file_storage_size: 10Gi
   image_pull_policy: IfNotPresent
+  image_pull_secrets:
+    - redhat-operators-pull-secret
   nginx_proxy_read_timeout: 120s
   gunicorn_timeout: 90
   nginx_client_max_body_size: 10m
