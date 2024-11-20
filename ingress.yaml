@@ -1,0 +1,12 @@
+---
+apiVersion: "networking.k8s.io/v1"
+kind: "Ingress"
+metadata:
+  name: "controller"
+  namespace: "aap-op"
+spec:
+  defaultBackend:
+    service:
+      name: "ansible-controller-web-svc"
+      port:
+        number: 8052

@@ -1,0 +1,36 @@
+apiVersion: automationhub.ansible.com/v1beta1
+kind: AutomationHub
+metadata:
+  name: automationhub
+  namespace: aap-op
+spec:
+  nginx_proxy_send_timeout: 120s
+  gunicorn_content_workers: 2
+  gunicorn_api_workers: 2
+  ingress_type: NodePort
+  no_log: true
+  file_storage_size: 10Gi
+  image_pull_policy: IfNotPresent
+  image_pull_secrets:
+    - redhat-operators-pull-secret
+  nginx_proxy_read_timeout: 120s
+  gunicorn_timeout: 90
+  nginx_client_max_body_size: 10m
+  web:
+    replicas: 1
+  nginx_proxy_connect_timeout: 120s
+  haproxy_timeout: 180s
+  content:
+    log_level: INFO
+    replicas: 2
+  api:
+    log_level: INFO
+    replicas: 1
+  redis:
+    log_level: INFO
+    replicas: 1
+  resource_manager:
+    replicas: 1
+  worker:
+    replicas: 2
+  file_storage_storage_class: aap-storage

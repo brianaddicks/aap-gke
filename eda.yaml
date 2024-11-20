@@ -1,0 +1,33 @@
+apiVersion: eda.ansible.com/v1alpha1
+kind: EDA
+metadata:
+  name: eda
+  namespace: aap-op
+spec:
+  ingress_type: ingress
+  no_log: true
+  activation_worker:
+    replicas: 5
+  image_pull_policy: IfNotPresent
+  image_pull_secrets:
+    - redhat-operators-pull-secret
+  ipv6_disabled: false
+  ui:
+    replicas: 1
+  set_self_labels: true
+  api:
+    gunicorn_workers: 2
+    replicas: 1
+  force_drop_db: false
+  scheduler:
+    replicas: 1
+  redis:
+    replicas: 1
+  admin_user: admin
+  default_worker:
+    replicas: 2
+  worker:
+    replicas: 2
+  automation_server_ssl_verify: 'no'
+  automation_server_url: 'https://YOURCONTROLLERURL'
+  service_type: NodePort

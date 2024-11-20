@@ -129,14 +129,18 @@ gcloud sql instances create ${GKE_DB_INSTANCE} \
 ## Create AAP Instance
 
 ```
+# 2.5
 kubectl apply -f aap-definition.yaml
+```
+
+```
+# 2.4
+kubectl apply -f aap2.4-definition.yaml
 ```
 
 ## Patch postgres
 
 ```
-kubectl patch serviceaccount ansible-controller -p '{"imagePullSecrets": [{"name": "redhat-operators-pull-secret"}]}' -n aap-op
-
 # 2.5
 kubectl patch statefulset.apps/ansible-postgres-15 -p '{"spec":{"template":{"spec":{"containers":[{"name":"postgres","securityContext":{"fsGroup":26}}]}}}}' -n aap-op
 
@@ -144,4 +148,80 @@ kubectl patch statefulset.apps/ansible-postgres-15 -p '{"spec":{"template":{"spe
 kubectl patch statefulset.apps/ansible-controller-postgres-13 -p '{"spec":{"template":{"spec":{"containers":[{"name":"postgres","securityContext":{"fsGroup":26}}]}}}}' -n aap-op
 ```
 
-Should be able to approve an Install Plan at this point, but it's not showing up.
+## Once all pods are running verify by using:
+
+```
+kubectl get pods -n aap-op
+```
+
+## Get URL address (this will take a minute as the ingress is created)
+```
+kubectl get ingress ansible-controller-ingress -n aap-op
+```
+
+## Wait for Ingress to be available (this will take a few minutes). Then get the secret
+
+```
+kubectl get secret ansible-controller-admin-password -o jsonpath="{.data.password}" -n aap-op | base64 --decode ; echo
+```
+
+# Install Automation Hub
+
+Cloud Filestore API Enabled, Filestore CSI enabled for cluster
+
+Create filestore with network if no default exists
+```
+kubectl apply -f filestore-example-class.yaml
+```
+
+## Deploy Automation Hub
+```
+kubectl apply -f hub.yaml
+```
+
+## Patch postgres
+```
+kubectl patch statefulset.apps/automationhub-postgres-13 -p '{"spec":{"template":{"spec":{"securityContext":{"fsGroup":26}}}}}' -n aap-op
+```
+
+Allow Deployment to fully complete
+
+## Expose web
+```
+kubectl expose deployment automationhub-web --name automation-hub-external-svc --type NodePort -n aap-op
+```
+
+## Add Ingress
+```
+kubectl apply -f ingress-hub.yaml
+```
+## Get URL address (this will take a minute as the ingress is created)
+```
+kubectl get ingress hub -n aap-op
+```
+## Get Automation Hub Secret
+```
+kubectl get secret automationhub-admin-password -o jsonpath="{.data.password}" -n aap-op | base64 --decode ; echo
+```
+
+## Deploy Automation EDA Controller
+```
+kubectl apply -f eda.yaml
+```
+
+## Patch postgres
+```
+kubectl patch statefulset.apps/eda-postgres-13 -p '{"spec":{"template":{"spec":{"securityContext":{"fsGroup":26}}}}}' -n aap-op
+```
+
+Allow Deployment to fully complete
+
+## Get URL address (this will take a minute as the ingress is created)
+```
+kubectl get ingress eda-ingress -n aap-op
+```
+## Get Automation EDA Secret
+```
+kubectl get secret eda-admin-password -o jsonpath="{.data.password}" -n aap-op | base64 --decode ; echo
+```
+

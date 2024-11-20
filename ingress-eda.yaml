@@ -1,0 +1,12 @@
+---
+apiVersion: "networking.k8s.io/v1"
+kind: "Ingress"
+metadata:
+  name: "eda"
+  namespace: "aap-op"
+spec:
+  defaultBackend:
+    service:
+      name: "eda-ui"
+      port:
+        number: 80
