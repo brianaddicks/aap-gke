@@ -125,8 +125,6 @@ kubectl apply -f aap2.4-definition.yaml
 ## Patch postgres
 
 ```
-kubectl patch serviceaccount ansible-controller -p '{"imagePullSecrets": [{"name": "redhat-operators-pull-secret"}]}' -n aap-op
-
 # 2.5
 kubectl patch statefulset.apps/ansible-postgres-15 -p '{"spec":{"template":{"spec":{"containers":[{"name":"postgres","securityContext":{"fsGroup":26}}]}}}}' -n aap-op
 
@@ -180,12 +178,6 @@ kubectl apply -f hub.yaml
 kubectl patch statefulset.apps/automationhub-postgres-13 -p '{"spec":{"template":{"spec":{"securityContext":{"fsGroup":26}}}}}' -n aap-op
 ```
 
-## Patch automationhub service account
-
-```
-kubectl patch serviceaccount automationhub -p '{"imagePullSecrets": [{"name": "redhat-operators-pull-secret"}]}' -n aap-op
-```
-
 Allow Deployment to fully complete
 
 ## Expose web
@@ -216,14 +208,7 @@ kubectl apply -f eda.yaml
 kubectl patch statefulset.apps/eda-postgres-13 -p '{"spec":{"template":{"spec":{"securityContext":{"fsGroup":26}}}}}' -n aap-op
 ```
 
-## Patch eda service account
-
-```
-kubectl patch serviceaccount eda -p '{"imagePullSecrets": [{"name": "redhat-operators-pull-secret"}]}' -n aap-op
-```
-
 Allow Deployment to fully complete
-
 
 ## Add Ingress
 ```
