@@ -113,11 +113,6 @@ kubectl apply -f Subscription.yaml -n aap-op
 ## Create AAP Instance
 
 ```
-# 2.5
-kubectl apply -f aap-definition.yaml
-```
-
-```
 # 2.4
 kubectl apply -f aap2.4-definition.yaml
 ```
@@ -125,10 +120,6 @@ kubectl apply -f aap2.4-definition.yaml
 ## Patch postgres
 
 ```
-# 2.5
-kubectl patch statefulset.apps/ansible-postgres-15 -p '{"spec":{"template":{"spec":{"securityContext":{"fsGroup":26}}}}}' -n aap-op
-
-
 # 2.4
 kubectl patch statefulset.apps/ansible-controller-postgres-13 -p '{"spec":{"template":{"spec":{"securityContext":{"fsGroup":26}}}}}' -n aap-op
 ```
@@ -209,4 +200,38 @@ kubectl get ingress eda-ingress -n aap-op
 ```
 kubectl get secret eda-admin-password -o jsonpath="{.data.password}" -n aap-op | base64 --decode ; echo
 ```
+
+# AAP 2.5
+
+Cloud Filestore API Enabled, Filestore CSI enabled for cluster
+
+## Create filestore with network if no default exists
+```
+kubectl apply -f filestore-example-class.yaml
+```
+
+## Deploy AAP 2.5
+```
+Then kubectl apply-f aap.yaml
+```
+
+## Patch Postgres Database
+
+```
+kubectl patch statefulset.apps/ansible-postgres-15 -p '{"spec":{"template":{"spec":{"securityContext":{"fsGroup":26}}}}}' -n aap-op
+```
+
+## Patch gateway for permission issues
+
+```
+kubectl patch deployments/ansible-gateway -p '{"spec":{"template":{"spec":{"securityContext":{"fsGroup":0,"runAsGroup":0,"runAsUser":1001}}}}}' -n aap-op
+```
+
+Once deployed
+
+```
+kubectl get secret ansible-admin-password -o jsonpath="{.data.password}" -n aap-op | base64 --decode ; echo
+```
+
+
 
