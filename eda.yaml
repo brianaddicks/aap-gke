@@ -9,6 +9,8 @@ spec:
   activation_worker:
     replicas: 5
   image_pull_policy: IfNotPresent
+  image_pull_secrets:
+    - redhat-operators-pull-secret
   ipv6_disabled: false
   ui:
     replicas: 1
