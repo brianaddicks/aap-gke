@@ -7,8 +7,7 @@ spec:
   nginx_proxy_send_timeout: 120s
   gunicorn_content_workers: 2
   gunicorn_api_workers: 2
-  service_type: NodePort
-  ingress_type: ingress
+  ingress_type: NodePort
   no_log: true
   file_storage_size: 10Gi
   image_pull_policy: IfNotPresent
