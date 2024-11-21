@@ -22,9 +22,9 @@ gcloud init
 ## Create VPC/GKE
 
 ```
-gcloud compute networks create aap-gke --project=${GKE_PROJECT} --subnet-mode=auto --mtu=1460 --bgp-routing-mode=regional
+gcloud compute networks create default --project=${GKE_PROJECT} --subnet-mode=auto --mtu=1460 --bgp-routing-mode=regional
 
-gcloud beta container --project "${GKE_PROJECT}" clusters create "${GKE_CLUSTER_NAME}" --region "${GKE_REGION}" --tier "standard" --no-enable-basic-auth --cluster-version "1.30.5-gke.1443001" --release-channel "regular" --machine-type "e2-medium" --image-type "COS_CONTAINERD" --disk-type "pd-balanced" --disk-size "100" --metadata disable-legacy-endpoints=true --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "3" --logging=SYSTEM,WORKLOAD --monitoring=SYSTEM,STORAGE,POD,DEPLOYMENT,STATEFULSET,DAEMONSET,HPA,CADVISOR,KUBELET --enable-ip-alias --network "projects/${GKE_PROJECT}/global/networks/aap-gke" --subnetwork "projects/${GKE_PROJECT}/regions/${GKE_REGION}/subnetworks/aap-gke" --no-enable-intra-node-visibility --default-max-pods-per-node "110" --enable-ip-access --security-posture=standard --workload-vulnerability-scanning=disabled --no-enable-master-authorized-networks --no-enable-google-cloud-access --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcePersistentDiskCsiDriver --enable-autoupgrade --enable-autorepair --max-surge-upgrade 1 --max-unavailable-upgrade 0 --binauthz-evaluation-mode=DISABLED --enable-managed-prometheus --enable-shielded-nodes
+gcloud beta container --project "${GKE_PROJECT}" clusters create "${GKE_CLUSTER_NAME}" --region "${GKE_REGION}" --tier "standard" --no-enable-basic-auth --cluster-version "1.30.5-gke.1443001" --release-channel "regular" --machine-type "e2-medium" --image-type "COS_CONTAINERD" --disk-type "pd-balanced" --disk-size "100" --metadata disable-legacy-endpoints=true --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "3" --logging=SYSTEM,WORKLOAD --monitoring=SYSTEM,STORAGE,POD,DEPLOYMENT,STATEFULSET,DAEMONSET,HPA,CADVISOR,KUBELET --enable-ip-alias --network "projects/${GKE_PROJECT}/global/networks/default" --subnetwork "projects/${GKE_PROJECT}/regions/${GKE_REGION}/subnetworks/default" --no-enable-intra-node-visibility --default-max-pods-per-node "110" --enable-ip-access --security-posture=standard --workload-vulnerability-scanning=disabled --no-enable-master-authorized-networks --no-enable-google-cloud-access --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcePersistentDiskCsiDriver --enable-autoupgrade --enable-autorepair --max-surge-upgrade 1 --max-unavailable-upgrade 0 --binauthz-evaluation-mode=DISABLED --enable-managed-prometheus --enable-shielded-nodes
 ```
 
 ## Connect to cluster
@@ -129,11 +129,6 @@ gcloud sql instances create ${GKE_DB_INSTANCE} \
 ## Create AAP Instance
 
 ```
-# 2.5
-kubectl apply -f aap-definition.yaml
-```
-
-```
 # 2.4
 kubectl apply -f aap2.4-definition.yaml
 ```
@@ -141,11 +136,8 @@ kubectl apply -f aap2.4-definition.yaml
 ## Patch postgres
 
 ```
-# 2.5
-kubectl patch statefulset.apps/ansible-postgres-15 -p '{"spec":{"template":{"spec":{"containers":[{"name":"postgres","securityContext":{"fsGroup":26}}]}}}}' -n aap-op
-
 # 2.4
-kubectl patch statefulset.apps/ansible-controller-postgres-13 -p '{"spec":{"template":{"spec":{"containers":[{"name":"postgres","securityContext":{"fsGroup":26}}]}}}}' -n aap-op
+kubectl patch statefulset.apps/ansible-controller-postgres-13 -p '{"spec":{"template":{"spec":{"securityContext":{"fsGroup":26}}}}}' -n aap-op
 ```
 
 ## Once all pods are running verify by using:
@@ -224,4 +216,38 @@ kubectl get ingress eda-ingress -n aap-op
 ```
 kubectl get secret eda-admin-password -o jsonpath="{.data.password}" -n aap-op | base64 --decode ; echo
 ```
+
+# AAP 2.5
+
+Cloud Filestore API Enabled, Filestore CSI enabled for cluster
+
+## Create filestore with network if no default exists
+```
+kubectl apply -f filestore-example-class.yaml
+```
+
+## Deploy AAP 2.5
+```
+Then kubectl apply-f aap.yaml
+```
+
+## Patch Postgres Database
+
+```
+kubectl patch statefulset.apps/ansible-postgres-15 -p '{"spec":{"template":{"spec":{"securityContext":{"fsGroup":26}}}}}' -n aap-op
+```
+
+## Patch gateway for permission issues
+
+```
+kubectl patch deployments/ansible-gateway -p '{"spec":{"template":{"spec":{"securityContext":{"fsGroup":0,"runAsGroup":0,"runAsUser":1001}}}}}' -n aap-op
+```
+
+Once deployed
+
+```
+kubectl get secret ansible-admin-password -o jsonpath="{.data.password}" -n aap-op | base64 --decode ; echo
+```
+
+
 

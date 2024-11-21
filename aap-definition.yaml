@@ -4,23 +4,89 @@ metadata:
   name: ansible
   namespace: aap-op
 spec:
-  service_type: NodePort
-  no_log: true
+  service_type: LoadBalancer
+  loadbalancer_protocol: http
+  loadbalancer_port: 80
+  ingress_type: none
+  no_log: false
   redis_mode: standalone
+  image_pull_policy: IfNotPresent
   image_pull_secrets:
     - redhat-operators-pull-secret
   api:
     log_level: INFO
     replicas: 1
   database:
-    postgres_data_volume_init: true
-    postgres_init_container_commands: |
-      chown 26:0 /var/lib/pgsql/data
-      chmod 700 /var/lib/pgsql/data
+    postgres_data_volume_init: false
   controller:
     disabled: false
+    security_context_settings:
+      fsGroup: 0
+      runAsGroup: 0
+      runAsUser: 996
+    service_type: NodePort
+    ingress_type: ingress
+    image_pull_secrets:
+      - redhat-operators-pull-secret
+    no_log: false
   eda:
-    disabled: true
+    disabled: false
+    ingress_type: ingress
+    no_log: true
+    activation_worker:
+      replicas: 5
+    image_pull_policy: IfNotPresent
+    image_pull_secrets:
+      - redhat-operators-pull-secret
+    ipv6_disabled: false
+    ui:
+      replicas: 1
+    set_self_labels: true
+    api:
+      gunicorn_workers: 2
+      replicas: 1
+    force_drop_db: false
+    scheduler:
+      replicas: 1
+    redis:
+      replicas: 1
+    admin_user: admin
+    default_worker:
+      replicas: 2
+    worker:
+      replicas: 2
+    automation_server_ssl_verify: 'no'
+    automation_server_url: 'https://YOURCONTROLLERURL'
+    service_type: NodePort
   hub:
-    disabled: true
-~                    
+    disabled: false
+    nginx_proxy_send_timeout: 120s
+    gunicorn_content_workers: 2
+    gunicorn_api_workers: 2
+    ingress_type: NodePort
+    no_log: true
+    file_storage_size: 10Gi
+    image_pull_policy: IfNotPresent
+    image_pull_secrets:
+      - redhat-operators-pull-secret
+    nginx_proxy_read_timeout: 120s
+    gunicorn_timeout: 90
+    nginx_client_max_body_size: 10m
+    web:
+      replicas: 1
+    nginx_proxy_connect_timeout: 120s
+    haproxy_timeout: 180s
+    content:
+      log_level: INFO
+      replicas: 2
+    api:
+      log_level: INFO
+      replicas: 1
+    redis:
+      log_level: INFO
+      replicas: 1
+    resource_manager:
+      replicas: 1
+    worker:
+      replicas: 2
+    file_storage_storage_class: aap-storage
