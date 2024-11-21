@@ -498,6 +498,7 @@ package: ansible-automation-platform-operator
 name: stable-2.5
 entries:
   - name: aap-operator.v2.5.0-0.1729742145
+    replaces: aap-operator.v2.4.0-0.1730153340
 ---
 schema: olm.channel
 package: ansible-automation-platform-operator

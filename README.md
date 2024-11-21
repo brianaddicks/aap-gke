@@ -1,6 +1,6 @@
 # AAP on GKE
 
-# Install prereqs
+## Install prereqs
 ```
 # google cloud repo
 sudo tee -a /etc/yum.repos.d/google-cloud-sdk.repo << EOM
@@ -22,9 +22,13 @@ gcloud init
 ## Create VPC/GKE
 
 ```
+gcloud config set project $GKE_PROJECT
+
 gcloud compute networks create default --project=${GKE_PROJECT} --subnet-mode=auto --mtu=1460 --bgp-routing-mode=regional
 
-gcloud beta container --project "${GKE_PROJECT}" clusters create "${GKE_CLUSTER_NAME}" --region "${GKE_REGION}" --tier "standard" --no-enable-basic-auth --cluster-version "1.30.5-gke.1443001" --release-channel "regular" --machine-type "e2-medium" --image-type "COS_CONTAINERD" --disk-type "pd-balanced" --disk-size "100" --metadata disable-legacy-endpoints=true --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "3" --logging=SYSTEM,WORKLOAD --monitoring=SYSTEM,STORAGE,POD,DEPLOYMENT,STATEFULSET,DAEMONSET,HPA,CADVISOR,KUBELET --enable-ip-alias --network "projects/${GKE_PROJECT}/global/networks/default" --subnetwork "projects/${GKE_PROJECT}/regions/${GKE_REGION}/subnetworks/default" --no-enable-intra-node-visibility --default-max-pods-per-node "110" --enable-ip-access --security-posture=standard --workload-vulnerability-scanning=disabled --no-enable-master-authorized-networks --no-enable-google-cloud-access --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcePersistentDiskCsiDriver --enable-autoupgrade --enable-autorepair --max-surge-upgrade 1 --max-unavailable-upgrade 0 --binauthz-evaluation-mode=DISABLED --enable-managed-prometheus --enable-shielded-nodes
+gcloud services enable file.googleapis.com
+
+gcloud beta container --project "${GKE_PROJECT}" clusters create "${GKE_CLUSTER_NAME}" --region "${GKE_REGION}" --tier "standard" --no-enable-basic-auth --cluster-version "1.30.5-gke.1443001" --release-channel "regular" --machine-type "e2-medium" --image-type "COS_CONTAINERD" --disk-type "pd-balanced" --disk-size "100" --metadata disable-legacy-endpoints=true --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "3" --logging=SYSTEM,WORKLOAD --monitoring=SYSTEM,STORAGE,POD,DEPLOYMENT,STATEFULSET,DAEMONSET,HPA,CADVISOR,KUBELET --enable-ip-alias --network "projects/${GKE_PROJECT}/global/networks/default" --subnetwork "projects/${GKE_PROJECT}/regions/${GKE_REGION}/subnetworks/default" --no-enable-intra-node-visibility --default-max-pods-per-node "110" --enable-ip-access --security-posture=standard --workload-vulnerability-scanning=disabled --no-enable-master-authorized-networks --no-enable-google-cloud-access --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcePersistentDiskCsiDriver,GcpFilestoreCsiDriver --enable-autoupgrade --enable-autorepair --max-surge-upgrade 1 --max-unavailable-upgrade 0 --binauthz-evaluation-mode=DISABLED --enable-managed-prometheus --enable-shielded-nodes
 ```
 
 ## Connect to cluster
@@ -36,13 +40,13 @@ gcloud container clusters get-credentials ${GKE_CLUSTER_NAME} --region ${GKE_REG
 
 https://docs.openshift.com/container-platform/4.17/cli_reference/opm/cli-opm-install.html
 
-```
-operator-sdk olm install --timeout=30m0s
-```
-
 ## Install OLM
 
 https://olm.operatorframework.io/docs/getting-started/
+
+```
+operator-sdk olm install --timeout=30m0s
+```
 
 ## Create a Catalog
 
@@ -159,7 +163,7 @@ kubectl get secret ansible-controller-admin-password -o jsonpath="{.data.passwor
 
 # Install Automation Hub
 
-Cloud Filestore API Enabled, Filestore CSI enabled for cluster
+Cloud Filestore API Enabled, Filestore CSI enabled for cluster (done when creating cluster above)
 
 Create filestore with network if no default exists
 ```
