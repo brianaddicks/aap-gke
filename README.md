@@ -153,6 +153,13 @@ kubectl get pods -n aap-op
 ## Get URL address (this will take a minute as the ingress is created)
 ```
 kubectl get ingress ansible-controller-ingress -n aap-op
+
+# Create DNS record
+export GKE_DNS_ZONE=$(echo "$GKE_PROJECT" | sed 's/^openenv-\(.*\)$/\1.gcp.redhatworkshops.io/')
+export GKE_DNS_ZONE_NAME=$(echo "$GKE_PROJECT" | sed 's/^openenv-/dns-zone-/')
+export GKE_AAP_INGRESS_IP=$(kubectl get ingress ansible-controller-ingress -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+gcloud dns --project=${GKE_PROJECT} record-sets create "ansible.${GKE_DNS_ZONE}" --zone="${GKE_DNS_ZONE_NAME}" --type="A" --ttl="60" --rrdatas="${GKE_AAP_INGRESS_IP}"
 ```
 
 ## Wait for Ingress to be available (this will take a few minutes). Then get the secret
