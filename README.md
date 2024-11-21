@@ -241,6 +241,7 @@ kubectl apply -f filestore-example-class.yaml
 ```
 kubectl apply -f aap.yaml
 ```
+#NOTE you will need to update public_base_url in the EDA section based on what the final URL you intend to use or Event Streams will not work
 
 ## Patch Postgres Database
 
@@ -254,5 +255,13 @@ Once deployed
 kubectl get secret ansible-admin-password -o jsonpath="{.data.password}" -n aap-op | base64 --decode ; echo
 ```
 
+If setting up DNS in GCP
+```
+export GKE_PROJECT="YOURGCPPROJECT"
+export GKE_DNS_ZONE=$(echo "$GKE_PROJECT" | sed 's/^openenv-\(.*\)$/\1.gcp.redhatworkshops.io/')
+export GKE_DNS_ZONE_NAME=$(echo "$GKE_PROJECT" | sed 's/^openenv-/dns-zone-/')
+export GKE_AAP_INGRESS_IP=$(kubectl get service ansible -n aap-op -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
+gcloud dns --project=${GKE_PROJECT} record-sets update "ansible.${GKE_DNS_ZONE}" --zone="${GKE_DNS_ZONE_NAME}" --type="A" --ttl="60" --rrdatas="${GKE_AAP_INGRESS_IP}"
+```
 
