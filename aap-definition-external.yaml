@@ -1,0 +1,112 @@
+apiVersion: aap.ansible.com/v1alpha1
+kind: AnsibleAutomationPlatform
+metadata:
+  name: ansible
+  namespace: aap-op
+spec:
+  service_type: LoadBalancer
+  loadbalancer_protocol: http
+  loadbalancer_port: 80
+  ingress_type: none
+  no_log: false
+  redis_mode: standalone
+  image_pull_policy: IfNotPresent
+  image_pull_secrets:
+    - redhat-operators-pull-secret
+  extra_settings:
+    - setting: CSRF_COOKIE_SECURE
+      value: False
+    - setting: SESSION_COOKIE_SECURE
+      value: False
+    - setting: CSRF_TRUSTED_ORIGINS
+      value:
+        - https://*.wvfm7.gcp.redhatworkshops.io
+        - http://*.wvfm7.gcp.redhatworkshops.io
+  api:
+    log_level: INFO
+    replicas: 1
+    security_context:
+      fsGroup: 0
+      runAsGroup: 0
+      runAsUser: 1001
+  database:
+    postgres_data_volume_init: false
+    database_secret: automation-platform-postgres-configuration
+  controller:
+    disabled: false
+    postgres_configuration_secret: controller-postgres-configuration
+    security_context_settings:
+      runAsGroup: 0
+      runAsUser: 996
+      fsGroup: 0
+    service_type: NodePort
+    ingress_type: ingress
+    garbage_collect_secrets: true
+    image_pull_secrets:
+      - redhat-operators-pull-secret
+    no_log: false
+  eda:
+    disabled: false
+    database:
+      database_secret: eda-postgres-configuration
+    ingress_type: ingress
+    no_log: true
+    activation_worker:
+      replicas: 5
+    image_pull_policy: IfNotPresent
+    image_pull_secrets:
+      - redhat-operators-pull-secret
+    ipv6_disabled: false
+    ui:
+      replicas: 1
+    set_self_labels: true
+    api:
+      gunicorn_workers: 2
+      replicas: 1
+    force_drop_db: false
+    scheduler:
+      replicas: 1
+    redis:
+      replicas: 1
+    admin_user: admin
+    default_worker:
+      replicas: 2
+    worker:
+      replicas: 2
+    automation_server_ssl_verify: 'no'
+    automation_server_url: 'https://YOURCONTROLLERURL'
+    service_type: NodePort
+    public_base_url: 'http://ansible.wvfm7.gcp.redhatworkshops.io'
+  hub:
+    disabled: false
+    postgres_configuration_secret: automationhub-postgres-configuration
+    nginx_proxy_send_timeout: 120s
+    gunicorn_content_workers: 2
+    gunicorn_api_workers: 2
+    ingress_type: NodePort
+    no_log: true
+    file_storage_size: 10Gi
+    image_pull_policy: IfNotPresent
+    image_pull_secrets:
+      - redhat-operators-pull-secret
+    nginx_proxy_read_timeout: 120s
+    gunicorn_timeout: 90
+    nginx_client_max_body_size: 10m
+    web:
+      replicas: 1
+    nginx_proxy_connect_timeout: 120s
+    haproxy_timeout: 180s
+    content:
+      log_level: INFO
+      replicas: 2
+    api:
+      log_level: INFO
+      replicas: 1
+    redis:
+      log_level: INFO
+      replicas: 1
+    resource_manager:
+      replicas: 1
+    worker:
+      replicas: 2
+    file_storage_storage_class: standard-rwx
