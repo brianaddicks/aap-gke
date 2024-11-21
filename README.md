@@ -232,7 +232,7 @@ kubectl apply -f filestore-example-class.yaml
 
 ## Deploy AAP 2.5
 ```
-Then kubectl apply-f aap.yaml
+kubectl apply -f aap.yaml
 ```
 
 ## Patch Postgres Database
