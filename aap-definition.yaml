@@ -13,19 +13,33 @@ spec:
   image_pull_policy: IfNotPresent
   image_pull_secrets:
     - redhat-operators-pull-secret
+  extra_settings:
+    - setting: CSRF_COOKIE_SECURE
+      value: False
+    - setting: SESSION_COOKIE_SECURE
+      value: False
+    - setting: CSRF_TRUSTED_ORIGINS
+      value:
+        - https://*.wvfm7.gcp.redhatworkshops.io
+        - http://*.wvfm7.gcp.redhatworkshops.io
   api:
     log_level: INFO
     replicas: 1
+    security_context:
+      fsGroup: 0
+      runAsGroup: 0
+      runAsUser: 1001
   database:
     postgres_data_volume_init: false
   controller:
     disabled: false
     security_context_settings:
-      fsGroup: 0
       runAsGroup: 0
       runAsUser: 996
+      fsGroup: 0
     service_type: NodePort
     ingress_type: ingress
+    garbage_collect_secrets: true
     image_pull_secrets:
       - redhat-operators-pull-secret
     no_log: false
@@ -89,4 +103,4 @@ spec:
       replicas: 1
     worker:
       replicas: 2
-    file_storage_storage_class: aap-storage
+    file_storage_storage_class: standard-rwx
