@@ -248,12 +248,6 @@ kubectl apply -f aap.yaml
 kubectl patch statefulset.apps/ansible-postgres-15 -p '{"spec":{"template":{"spec":{"securityContext":{"fsGroup":26}}}}}' -n aap-op
 ```
 
-## Patch gateway for permission issues
-
-```
-kubectl patch deployments/ansible-gateway -p '{"spec":{"template":{"spec":{"securityContext":{"fsGroup":0,"runAsGroup":0,"runAsUser":1001}}}}}' -n aap-op
-```
-
 Once deployed
 
 ```
