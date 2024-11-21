@@ -72,6 +72,7 @@ spec:
     automation_server_ssl_verify: 'no'
     automation_server_url: 'https://YOURCONTROLLERURL'
     service_type: NodePort
+    public_base_url: 'http://ansible.wvfm7.gcp.redhatworkshops.io'
   hub:
     disabled: false
     nginx_proxy_send_timeout: 120s
