@@ -241,7 +241,7 @@ kubectl apply -f filestore-example-class.yaml
 ```
 kubectl apply -f aap.yaml
 ```
-#NOTE you will need to update public_base_url in the EDA section based on what the final URL you intend to use or Event Streams will not work
+# NOTE you will need to update public_base_url in the EDA section based on what the final URL you intend to use or Event Streams will not work
 
 ## Patch Postgres Database
 
