@@ -239,9 +239,9 @@ kubectl apply -f filestore-example-class.yaml
 
 ## Deploy AAP 2.5
 ```
-kubectl apply -f aap.yaml
+kubectl apply -f aap-definition.yaml
 ```
-# NOTE you will need to update public_base_url in the EDA section based on what the final URL you intend to use or Event Streams will not work
+# NOTE you will need to update public_base_url in the EDA section of aap-definition.yaml based on what the final URL you intend (load balancer Virtual Server, GCP DNS, etc) to use or Event Streams will not work
 
 ## Patch Postgres Database
 
