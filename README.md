@@ -28,7 +28,41 @@ gcloud compute networks create default --project=${GKE_PROJECT} --subnet-mode=au
 
 gcloud services enable file.googleapis.com
 
-gcloud beta container --project "${GKE_PROJECT}" clusters create "${GKE_CLUSTER_NAME}" --region "${GKE_REGION}" --tier "standard" --no-enable-basic-auth --cluster-version "1.30.5-gke.1443001" --release-channel "regular" --machine-type "e2-medium" --image-type "COS_CONTAINERD" --disk-type "pd-balanced" --disk-size "100" --metadata disable-legacy-endpoints=true --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "3" --logging=SYSTEM,WORKLOAD --monitoring=SYSTEM,STORAGE,POD,DEPLOYMENT,STATEFULSET,DAEMONSET,HPA,CADVISOR,KUBELET --enable-ip-alias --network "projects/${GKE_PROJECT}/global/networks/default" --subnetwork "projects/${GKE_PROJECT}/regions/${GKE_REGION}/subnetworks/default" --no-enable-intra-node-visibility --default-max-pods-per-node "110" --enable-ip-access --security-posture=standard --workload-vulnerability-scanning=disabled --no-enable-master-authorized-networks --no-enable-google-cloud-access --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcePersistentDiskCsiDriver,GcpFilestoreCsiDriver --enable-autoupgrade --enable-autorepair --max-surge-upgrade 1 --max-unavailable-upgrade 0 --binauthz-evaluation-mode=DISABLED --enable-managed-prometheus --enable-shielded-nodes
+gcloud beta container \
+    --project "${GKE_PROJECT}" clusters create "${GKE_CLUSTER_NAME}" \
+    --region "${GKE_REGION}" \
+    --tier "standard" \
+    --no-enable-basic-auth \
+    --cluster-version "1.30.5-gke.1443001" \
+    --release-channel "regular" \
+    --machine-type "e2-medium" \
+    --image-type "COS_CONTAINERD" \
+    --disk-type "pd-balanced" \
+    --disk-size "100" \
+    --metadata disable-legacy-endpoints=true \
+    --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" \
+    --num-nodes "3" \
+    --logging=SYSTEM,WORKLOAD \
+    --monitoring=SYSTEM,STORAGE,POD,DEPLOYMENT,STATEFULSET,DAEMONSET,HPA,CADVISOR,KUBELET \
+    --enable-ip-alias \
+    --network "projects/${GKE_PROJECT}/global/networks/default" \
+    --subnetwork "projects/${GKE_PROJECT}/regions/${GKE_REGION}/subnetworks/default" \
+    --no-enable-intra-node-visibility \
+    --default-max-pods-per-node "110" \
+    --enable-ip-access \
+    --security-posture=standard \
+    --workload-vulnerability-scanning=disabled \
+    --no-enable-master-authorized-networks \
+    --no-enable-google-cloud-access \
+    --addons HorizontalPodAutoscaling,HttpLoadBalancing,GcePersistentDiskCsiDriver,GcpFilestoreCsiDriver \
+    --enable-autoupgrade \
+    --enable-autorepair \
+    --max-surge-upgrade 1 \
+    --max-unavailable-upgrade 0 \
+    --binauthz-evaluation-mode=DISABLED \
+    --enable-managed-prometheus \
+    --enable-shielded-nodes
+    --workload-pool="${GKE_PROJECT}.svc.id.goog"
 ```
 
 ## Connect to cluster
@@ -149,6 +183,48 @@ gcloud sql databases create platform --instance=${GKE_DB_INSTANCE}
 gcloud sql users create ansible -i $GKE_DB_INSTANCE --password=${GKE_DB_AAP_PASSWORD}
 ```
 
+## Get Certs for SQL Auth
+
+```
+gcloud sql ssl client-certs create ansible client-key.pem \
+    --instance=${GKE_DB_INSTANCE}
+gcloud sql ssl client-certs describe ansible \
+    --instance=${GKE_DB_INSTANCE} \
+    --format="value(cert)" > client-cert.pem
+gcloud sql instances describe ${GKE_DB_INSTANCE} \
+    --format="value(serverCaCert.cert)" > server-ca.pem
+```
+
+## Setup SQL Auth Proxy
+
+```
+export GKE_SERVICE_ACCOUNT=ansible-cloudsql
+export GKE_AAP_NAMESPACE=aap-op
+
+kubectl apply -f KSA.yaml
+
+gcloud sql instances describe $GKE_DB_INSTANCE \
+    --format='value[](connectionName)'
+gcloud iam service-accounts create $GKE_SERVICE_ACCOUNT \
+    --description="Ansible SA for SQL connection" \
+    --display-name="${GKE_SERVICE_ACCOUNT}"
+gcloud projects add-iam-policy-binding $GKE_PROJECT \
+    --member="serviceAccount:${GKE_SERVICE_ACCOUNT}@${GKE_PROJECT}.iam.gserviceaccount.com" \
+    --role="roles/cloudsql.client"
+
+# This takes 20-30 minutes
+gcloud container clusters update ${GKE_CLUSTER_NAME} \
+    --region "${GKE_REGION}" \
+    --workload-pool="${GKE_PROJECT}.svc.id.goog"
+
+gcloud iam service-accounts add-iam-policy-binding \
+    --role="roles/iam.workloadIdentityUser" \
+    --member="serviceAccount:${GKE_PROJECT}.svc.id.goog[${GKE_AAP_NAMESPACE}/$ansible-gateway]" \
+    ${GKE_SERVICE_ACCOUNT}@${GKE_PROJECT}.iam.gserviceaccount.com
+
+kubectl patch deployment ansible-gateway --patch-file SqlAuthProxy.yaml
+```
+
 ## Connect and Enable hstore
 
 ```
@@ -156,6 +232,9 @@ sudo dnf install -y postgresql
 gcloud sql connect ${GKE_DB_INSTANCE} -d hub --user=postgres
 CREATE EXTENSION IF NOT EXISTS hstore;​
 ```
+
+## Configure Cloud SQL Auth Proxy
+
 
 ## Create AAP Instance
 
@@ -291,4 +370,3 @@ export GKE_AAP_INGRESS_IP=$(kubectl get service ansible -n aap-op -o jsonpath='{
 
 gcloud dns --project=${GKE_PROJECT} record-sets update "ansible.${GKE_DNS_ZONE}" --zone="${GKE_DNS_ZONE_NAME}" --type="A" --ttl="60" --rrdatas="${GKE_AAP_INGRESS_IP}"
 ```
-
