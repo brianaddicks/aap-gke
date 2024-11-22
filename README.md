@@ -114,13 +114,21 @@ kubectl apply -f OperatorGroup.yaml -n aap-op
 kubectl apply -f Subscription.yaml -n aap-op
 ```
 
-## Optional (Create Cloud SQL Instance)
+# Setup External DB (Optional)
+
+Assumes GCP CloudSQL
+
+## Create CloudSQL Instance
 
 ```
-export GKE_DB_VERSION=POSTGRES_13
+# export GKE_DB_VERSION=POSTGRES_13 # AAP 2.4
+export GKE_DB_VERSION=POSTGRES_15 # AAP 2.5
+export GKE_DB_INSTANCE=ansible
+export GKE_SERVICE_NETWORK=<your_service_network>
+export GKE_DB_ROOT_PASSWORD=<your_password>
 
+# create instance
 gcloud services enable sqladmin.googleapis.com
-
 gcloud sql instances create ${GKE_DB_INSTANCE} \
     --database-version=${GKE_DB_VERSION} \
     --cpu=2 \
@@ -128,6 +136,25 @@ gcloud sql instances create ${GKE_DB_INSTANCE} \
     --region=${GKE_REGION} \
     --root-password=${GKE_DB_ROOT_PASSWORD} \
     --project=${GKE_PROJECT}
+    --authorized-networks=${GKE_SERVICE_NETWORK}
+```
+
+## Create Databases and Users
+
+```
+gcloud sql databases create controller --instance=${GKE_DB_INSTANCE}
+gcloud sql databases create hub --instance=${GKE_DB_INSTANCE}
+gcloud sql databases create eda --instance=${GKE_DB_INSTANCE}
+gcloud sql databases create platform --instance=${GKE_DB_INSTANCE}
+gcloud sql users create ansible -i $GKE_DB_INSTANCE --password=${GKE_DB_AAP_PASSWORD}
+```
+
+## Connect and Enable hstore
+
+```
+sudo dnf install -y postgresql
+gcloud sql connect ${GKE_DB_INSTANCE} -d hub --user=postgres
+CREATE EXTENSION IF NOT EXISTS hstore;​
 ```
 
 ## Create AAP Instance
