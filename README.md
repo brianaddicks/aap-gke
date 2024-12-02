@@ -199,7 +199,7 @@ kubectl get secret ansible-controller-admin-password -o jsonpath="{.data.passwor
 
 Cloud Filestore API Enabled, Filestore CSI enabled for cluster (done when creating cluster above)
 
-Create filestore with network if no default exists
+Create filestore with network if no default exists (you must update the network to match the cluster network name)
 ```
 kubectl apply -f filestore-example-class.yaml
 ```
@@ -259,7 +259,7 @@ kubectl get secret eda-admin-password -o jsonpath="{.data.password}" -n aap-op |
 
 Cloud Filestore API Enabled, Filestore CSI enabled for cluster
 
-## Create filestore with network if no default exists
+## Create filestore with network if no default exists (you must update the network to match the cluster network name)
 ```
 kubectl apply -f filestore-example-class.yaml
 ```
