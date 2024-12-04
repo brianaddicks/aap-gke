@@ -37,6 +37,7 @@ spec:
     postgres_data_volume_init: false
     database_secret: automation-platform-postgres-configuration
   controller:
+    create_preload_data: true
     hostname: 'ansible.$GKE_DNS_ZONE'
     ee_pull_credentials_secret: redhat-operators-pull-secret
     service_account_annotations: >-
