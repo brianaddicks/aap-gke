@@ -39,7 +39,7 @@ spec:
   controller:
     create_preload_data: true
     hostname: 'ansible.$GKE_DNS_ZONE'
-    ee_pull_credentials_secret: redhat-operators-pull-secret
+    ee_pull_credentials_secret: ansible-default-ee-pull
     service_account_annotations: >-
       iam.gke.io/gcp-service-account: $GKE_SERVICE_ACCOUNT@$GKE_PROJECT.iam.gserviceaccount.com
     disabled: false

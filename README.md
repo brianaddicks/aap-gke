@@ -96,6 +96,9 @@ opm init ansible-automation-platform-operator \
 opm render registry.redhat.io/ansible-automation-platform/platform-operator-bundle:2.5-883 \
     --output=yaml >> aap-catalog/ansible-automation-platform-operator.yaml
 
+opm render registry.redhat.io/ansible-automation-platform/platform-operator-bundle:2.5-973 \
+    --output=yaml >> aap-catalog/ansible-automation-platform-operator.yaml
+
 opm render registry.redhat.io/ansible-automation-platform/platform-operator-bundle:2.4-2119 \
     --output=yaml >> aap-catalog/ansible-automation-platform-operator.yaml
 
@@ -456,6 +459,18 @@ stringData:
 type: Opaque
 ```
 
+### Set default ee pull creds (optional, only used for builtin content)
+```
+AUTH_KEY=$(jq -r '.auths["registry.redhat.io"].auth' "${XDG_RUNTIME_DIR}/containers/auth.json")
+DECODED_AUTH=$(echo "$AUTH_KEY" | base64 -d)
+AAP_EE_DEFAULT_PULL_USERNAME=$(echo "$DECODED_AUTH" | cut -d: -f1)
+AAP_EE_DEFAULT_PULL_PASSWORD=$(echo "$DECODED_AUTH" | cut -d: -f2)
+kubectl create secret generic ansible-default-ee-pull \
+    --from-literal=username="$AAP_EE_DEFAULT_PULL_USERNAME" \
+    --from-literal=password="$AAP_EE_DEFAULT_PULL_PASSWORD" \
+    --from-literal=url="registry.redhat.io"
+```
+
 ### Install from operator
 ```
 # get DNS info
@@ -505,7 +520,11 @@ export GKE_DNS_ZONE=$(echo "$GKE_PROJECT" | sed 's/^openenv-\(.*\)$/\1.gcp.redha
 export GKE_DNS_ZONE_NAME=$(echo "$GKE_PROJECT" | sed 's/^openenv-/dns-zone-/')
 export GKE_AAP_INGRESS_IP=$(kubectl get service ansible -n aap-op -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
+# create
 gcloud dns --project=${GKE_PROJECT} record-sets create "ansible.${GKE_DNS_ZONE}" --zone="${GKE_DNS_ZONE_NAME}" --type="A" --ttl="60" --rrdatas="${GKE_AAP_INGRESS_IP}"
+
+# update
+gcloud dns --project=${GKE_PROJECT} record-sets update "ansible.${GKE_DNS_ZONE}" --zone="${GKE_DNS_ZONE_NAME}" --type="A" --ttl="60" --rrdatas="${GKE_AAP_INGRESS_IP}"
 ```
 
 # Redeploying
