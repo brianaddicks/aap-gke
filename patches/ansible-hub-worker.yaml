@@ -1,0 +1,38 @@
+spec:
+  template:
+    spec:
+      containers:
+        - name: worker
+          volumeMounts:
+            - mountPath: /root/.postgresql/root.crt
+              name: ansible-hub-bundle-cacert
+              readOnly: true
+              subPath: bundle-ca.crt
+            - name: ansible-postgres-cert-volume
+              mountPath: /root/.postgresql/postgresql.crt
+              readOnly: true
+              subPath: tls.crt
+            - name: ansible-postgres-cert-volume
+              mountPath: /root/.postgresql/postgresql.key
+              readOnly: true
+              subPath: tls.key
+      initContainers:
+        - name: wait-for-migrations
+          volumeMounts:
+            - mountPath: /root/.postgresql/root.crt
+              name: ansible-hub-bundle-cacert
+              readOnly: true
+              subPath: bundle-ca.crt
+            - name: ansible-postgres-cert-volume
+              mountPath: /root/.postgresql/postgresql.crt
+              readOnly: true
+              subPath: tls.crt
+            - name: ansible-postgres-cert-volume
+              mountPath: /root/.postgresql/postgresql.key
+              readOnly: true
+              subPath: tls.key
+      volumes:
+        - name: ansible-postgres-cert-volume
+          secret:
+            defaultMode: 0640
+            secretName: ansible-postgres-cert

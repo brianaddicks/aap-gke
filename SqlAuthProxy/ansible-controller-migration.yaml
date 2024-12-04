@@ -1,0 +1,28 @@
+apiVersion: cloudsql.cloud.google.com/v1
+kind: AuthProxyWorkload
+metadata:
+  name: ansible-controller-migration
+spec:
+  workloadSelector:
+    kind: 'Job'
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: automationcontroller
+  authProxyContainer:
+    # Resource configuration depends on an application's requirements. You
+    # should adjust the following values based on what your application
+    # needs. For details, see https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+    resources:
+      requests:
+        # The proxy's CPU use scales linearly with the amount of IO between
+        # the database and the application. Adjust this value based on your
+        # application's requirements.
+        cpu: '50m'
+        # The proxy's memory use scales linearly with the number of active
+        # connections. Fewer open connections will use less memory. Adjust
+        # this value based on your application's requirements.
+        memory: '256Mi'
+  instances:
+    - connectionString: '$GKE_SQL_CONNECTIONNAME'
+      portEnvName: 'DB_PORT'
+      hostEnvName: 'DB_HOST'

@@ -1,0 +1,40 @@
+spec:
+  template:
+    spec:
+      containers:
+        - name: api
+          env:
+            - name: PGSSLCERT
+              value: /var/lib/ansible-automation-platform/gateway/.postgresql/postgresql.crt
+            - name: PGSSLKEY
+              value: /var/lib/ansible-automation-platform/gateway/.postgresql/postgresql.key
+          volumeMounts:
+            - name: ansible-postgres-cert-volume
+              mountPath: /var/lib/ansible-automation-platform/gateway/.postgresql/postgresql.crt
+              readOnly: true
+              subPath: tls.crt
+            - name: ansible-postgres-cert-volume
+              mountPath: /var/lib/ansible-automation-platform/gateway/.postgresql/postgresql.key
+              readOnly: true
+              subPath: tls.key
+      initContainers:
+        - name: run-migrations
+          env:
+            - name: PGSSLCERT
+              value: /var/lib/ansible-automation-platform/gateway/.postgresql/postgresql.crt
+            - name: PGSSLKEY
+              value: /var/lib/ansible-automation-platform/gateway/.postgresql/postgresql.key
+          volumeMounts:
+            - name: ansible-postgres-cert-volume
+              mountPath: /var/lib/ansible-automation-platform/gateway/.postgresql/postgresql.crt
+              readOnly: true
+              subPath: tls.crt
+            - name: ansible-postgres-cert-volume
+              mountPath: /var/lib/ansible-automation-platform/gateway/.postgresql/postgresql.key
+              readOnly: true
+              subPath: tls.key
+      volumes:
+        - name: ansible-postgres-cert-volume
+          secret:
+            defaultMode: 0640
+            secretName: ansible-postgres-cert

@@ -20,8 +20,8 @@ spec:
       value: False
     - setting: CSRF_TRUSTED_ORIGINS
       value:
-        - https://*.wvfm7.gcp.redhatworkshops.io
-        - http://*.wvfm7.gcp.redhatworkshops.io
+        - https://*.$GKE_DNS_ZONE
+        - http://*.$GKE_DNS_ZONE
   api:
     log_level: INFO
     replicas: 1
@@ -72,7 +72,7 @@ spec:
     automation_server_ssl_verify: 'no'
     automation_server_url: 'https://YOURCONTROLLERURL'
     service_type: NodePort
-    public_base_url: 'http://ansible.wvfm7.gcp.redhatworkshops.io'
+    public_base_url: 'http://ansible.$GKE_DNS_ZONE'
   hub:
     disabled: false
     nginx_proxy_send_timeout: 120s

@@ -4,9 +4,9 @@ metadata:
   name: ansible
   namespace: aap-op
 spec:
+  db_fields_encryption_secret: backup-ansible-db-fields-encryption-secret
   service_account_annotations: >-
     iam.gke.io/gcp-service-account: $GKE_SERVICE_ACCOUNT@$GKE_PROJECT.iam.gserviceaccount.com
-  #  bundle_cacert_secret: ansible-custom-certs
   service_type: LoadBalancer
   loadbalancer_protocol: http
   loadbalancer_port: 80
@@ -36,6 +36,7 @@ spec:
     postgres_data_volume_init: false
     database_secret: automation-platform-postgres-configuration
   controller:
+    secret_key_secret: backup-ansible-controller-secret-key
     ee_pull_credentials_secret: redhat-operators-pull-secret
     service_account_annotations: >-
       iam.gke.io/gcp-service-account: $GKE_SERVICE_ACCOUNT@$GKE_PROJECT.iam.gserviceaccount.com
@@ -52,6 +53,7 @@ spec:
       - redhat-operators-pull-secret
     no_log: false
   eda:
+    db_fields_encryption_secret: backup-ansible-eda-db-fields-encryption-secret
     service_account_annotations: >-
       iam.gke.io/gcp-service-account: $GKE_SERVICE_ACCOUNT@$GKE_PROJECT.iam.gserviceaccount.com
     disabled: false
@@ -86,6 +88,7 @@ spec:
     service_type: NodePort
     public_base_url: 'http://ansible.$GKE_DNS_ZONE'
   hub:
+    db_fields_encryption_secret: backup-ansible-hub-db-fields-encryption
     service_account_annotations: >-
       iam.gke.io/gcp-service-account: $GKE_SERVICE_ACCOUNT@$GKE_PROJECT.iam.gserviceaccount.com
     disabled: false

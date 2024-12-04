@@ -1,3 +1,7 @@
 db-secrets.yaml
 client-cert.pem
 client-key.pem
+server-ca.pem
+ldap-ca.key
+ldap-ca.pem
+tmp

@@ -1,0 +1,19 @@
+spec:
+  template:
+    spec:
+      containers:
+        - name: ansible-controller-web
+          volumeMounts:
+            - name: ansible-postgres-cert-volume
+              mountPath: /var/lib/awx/.postgresql/postgresql.crt
+              readOnly: true
+              subPath: tls.crt
+            - name: ansible-postgres-cert-volume
+              mountPath: /var/lib/awx/.postgresql/postgresql.key
+              readOnly: true
+              subPath: tls.key
+      volumes:
+        - name: ansible-postgres-cert-volume
+          secret:
+            defaultMode: 0640
+            secretName: ansible-postgres-cert
