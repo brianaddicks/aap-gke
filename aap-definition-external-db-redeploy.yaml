@@ -1,7 +1,7 @@
 apiVersion: aap.ansible.com/v1alpha1
 kind: AnsibleAutomationPlatform
 metadata:
-  name: ansible
+  name: 'ansible.$GKE_DNS_ZONE'
   namespace: aap-op
 spec:
   hostname: 'ansible.$GKE_DNS_ZONE'
