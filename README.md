@@ -391,6 +391,9 @@ curl https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy-operato
 
 ### Setup AuthProxy Operator Instances
 
+Note that the Sql Auth Proxy instances provided here are using minial resources.
+These will need to be adjusted for production.
+
 ```
 # get your CloudSQL connectionName
 export GKE_SQL_CONNECTIONNAME="$(gcloud sql instances describe $GKE_DB_INSTANCE \
@@ -482,6 +485,9 @@ The definition files make a lot of assumptions.
 Update them as needed.
 
 ```
+# verify the InstallPlan has succeeded
+kubectl get csv -l operators.coreos.com/ansible-automation-platform-operator.aap-op -o jsonpath={.items[0].status.phase}; echo
+
 # get DNS info
 export GKE_PROJECT="YOURGCPPROJECT"
 
