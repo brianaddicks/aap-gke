@@ -20,8 +20,8 @@ Here's an overview of the process.
 
 Also included in this document:
 
-* Redeploying with Existing Database
-* Upgrading AAP Operator
+* [Redeploying with Existing Database](#redeploying-with-existing-database)
+* [Upgrading AAP Operator](#upgrading-aap-operator)
 
 ## Create a VPC and GKE Cluster
 
@@ -239,7 +239,7 @@ It currently includes the following bundle versions.
 * 2.4-2119
 
 The following steps detail how to create this from scratch.
-Procedures for updating the available version of the AAP operator are [here].
+Procedures for updating the available version of the AAP operator are [here](#upgrading-aap-operator).
 
 ```
 # generate skeleton for operator
@@ -384,7 +384,7 @@ done
 ```
 ## Install AAP from operator
 
-This process is for AAP 2.5, for 2.4 go [here].
+This process is for AAP 2.5, for 2.4 go [here](README-2.4.md).
 
 ### External Database
 
