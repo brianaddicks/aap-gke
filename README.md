@@ -507,6 +507,7 @@ The process below assumes Google Cloud DNS is being used.
 Once the `ansible` service is available and has an external IP assigned, do the following to create an external DNS record for AAP.
 
 ```
+# should add a loop here to wait for the service
 export GKE_DNS_ZONE=$(echo "$GKE_PROJECT" | sed 's/^openenv-\(.*\)$/\1.gcp.redhatworkshops.io/')
 export GKE_DNS_ZONE_NAME=$(echo "$GKE_PROJECT" | sed 's/^openenv-/dns-zone-/')
 export GKE_AAP_INGRESS_IP=$(kubectl get service ansible -n aap-op -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
@@ -532,6 +533,7 @@ Automation Hub doesn't support the service_account_annotations key.
 Once the ansible-hub sa is created, annotate it and restart the automation-hub pods.
 
 ```
+# should add a loop here to wait for the sa
 kubectl annotate serviceaccount ansible-hub \
         iam.gke.io/gcp-service-account=${GKE_SERVICE_ACCOUNT}@${GKE_PROJECT}.iam.gserviceaccount.com
 

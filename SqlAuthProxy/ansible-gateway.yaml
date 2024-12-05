@@ -24,3 +24,4 @@ spec:
     - connectionString: '$GKE_SQL_CONNECTIONNAME'
       portEnvName: 'DATABASE_PORT'
       hostEnvName: 'DATABASE_HOST'
+      privateIP: true

@@ -24,3 +24,4 @@ spec:
     - connectionString: '$GKE_SQL_CONNECTIONNAME'
       portEnvName: 'EDA_DB_PORT'
       hostEnvName: 'EDA_DB_HOST'
+      privateIP: true
