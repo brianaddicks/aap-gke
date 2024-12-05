@@ -10,13 +10,13 @@ All of the steps below were performed from a RHEL 9 machine.
 
 Here's an overview of the process.
 
-1. [Create a VPC and GKE Cluster](https://github.com/brianaddicks/aap-gke/tree/main?tab=readme-ov-file#create-a-vpc-and-gke-cluster)
-1. Create a Cloud SQL Postgres instance (Optional)
-1. Install OLM
-1. Expose AAP operator to GKE Cluster
-1. Enable Sql Auth Proxy for Cloud SQL (Optional)
-1. Install AAP from operator
-1. Access AAP
+1. [Create a VPC and GKE Cluster](#create-a-vpc-and-gke-cluster)
+1. [Create a Cloud SQL Postgres instance (Optional)](#enable-sql-auth-proxy-for-cloud-sql-optional)
+1. [Install OLM](#install-olm)
+1. [Expose AAP operator to GKE Cluster](#expose-aap-operator-to-gke-cluster)
+1. [Enable Sql Auth Proxy for Cloud SQL (Optional)](#enable-sql-auth-proxy-for-cloud-sql-optional)
+1. [Install AAP from operator](#install-aap-from-operator)
+1. [Access AAP](#access-aap)
 
 Also included in this document:
 
