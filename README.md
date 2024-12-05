@@ -143,8 +143,8 @@ gcloud sql instances create ${GKE_DB_INSTANCE} \
     --region=${GKE_REGION} \
     --root-password=${GKE_DB_ROOT_PASSWORD} \
     --project=${GKE_PROJECT} \
-    --no-assign-ip \
     --network=default
+    --no-assign-ip \  # leaving this off for now, need a public IP to enable hstore extension from the install machine
 #    --enable-google-private-path \
 #    --network=projects/${GKE_PROJECT}/global/networks/default \
 #    --enable-private-service-connect \
@@ -173,9 +173,21 @@ echo $GKE_DB_ROOT_PASSWORD
 # connect to sql instance
 gcloud sql connect ${GKE_DB_INSTANCE} -d hub --user=postgres
 
-# Enable hstore extension
+# enable hstore extension
 CREATE EXTENSION IF NOT EXISTS hstore;​
 \q
+
+# disable public IP on SQL instance, skip this if enabling client cert auth
+gcloud sql instances patch ${GKE_DB_INSTANCE}
+    --no-assign-ip
+
+# disable public IP on SQL instance and enable client cert auth
+gcloud sql instances patch ${GKE_DB_INSTANCE} \
+    --no-assign-ip
+    --ssl-mode=TRUSTED_CLIENT_CERTIFICATE_REQUIRED
+
+# might be cool to move this process to a container that you run before installing the operator (better yet the operator would do it...)
+# that way you'd never need a public IP and could just enable TRUSTED_CLIENT_CERTIFICATE_REQUIRED from the start
 ```
 
 ### Prepare for SQL Auth Proxy (Optional)
