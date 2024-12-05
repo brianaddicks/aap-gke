@@ -320,8 +320,8 @@ podman push quay.io/${QUAY_USERNAME}/aap-catalog:latest
 podman login registry.redhat.io
 
 # create k8s namespace for deployment
-kubectl create namespace ${AAP_NAMESPACE}
-kubectl config set-context --current --namespace ${AAP_NAMESPACE}
+kubectl create namespace ${GKE_AAP_NAMESPACE}
+kubectl config set-context --current --namespace ${GKE_AAP_NAMESPACE}
 
 # create pull secret for olm to pull the operator images
 kubectl create secret generic rhregistry \
