@@ -151,9 +151,6 @@ gcloud sql instances create ${GKE_DB_INSTANCE} \
 #    --psc-auto-connections=project=${GKE_PROJECT},network=projects/${GKE_PROJECT}/global/networks/default
 #    --authorized-networks=${GKE_SERVICE_NETWORK}
 ```
-
-Enable Private IP/Path in console
-
 ### Create Databases and Users
 
 ```
@@ -167,11 +164,11 @@ gcloud sql users create ansible -i $GKE_DB_INSTANCE --password=${GKE_DB_AAP_PASS
 ### Connect and Enable hstore for Automation Hub database
 
 ```
-# you'll be prompted for this password
-echo $GKE_DB_ROOT_PASSWORD
-
 # install postgresql client if needed
 sudo dnf install -y postgresql
+
+# you'll be prompted for this password
+echo $GKE_DB_ROOT_PASSWORD
 
 # connect to sql instance
 gcloud sql connect ${GKE_DB_INSTANCE} -d hub --user=postgres
