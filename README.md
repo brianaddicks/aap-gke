@@ -25,7 +25,7 @@ Also included in this document:
 
 ## Create a VPC and GKE Cluster
 
-### Connect to GCP with gcloud cli
+### Install/Configure gcloud CLI
 
 ```
 # add repo for gcloud binaries
@@ -62,13 +62,15 @@ gcloud compute networks create default --project=${GKE_PROJECT} --subnet-mode=au
 # enable for filestore storage class
 gcloud services enable file.googleapis.com
 
+# enable kubernetes api
+gcloud services enable container.googleapis.com
+
 # create GKE cluster
 gcloud beta container \
     --project "${GKE_PROJECT}" clusters create "${GKE_CLUSTER_NAME}" \
     --region "${GKE_REGION}" \
     --tier "standard" \
     --no-enable-basic-auth \
-    --cluster-version "1.30.5-gke.1443001" \
     --release-channel "regular" \
     --machine-type "e2-medium" \
     --image-type "COS_CONTAINERD" \
