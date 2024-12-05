@@ -342,7 +342,7 @@ Update the CatalogSource.yaml file to point to your container image made above.
 # apply CatalogSource
 kubectl apply -f CatalogSource.yaml -n olm
 
-# check for pacakage availability, this will take a minute or two
+# check for package availability, this will take a minute or two
 echo "Waiting for 'AAP' in package manifest..."
 
 while true; do
