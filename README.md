@@ -222,7 +222,7 @@ gcloud container clusters update ${GKE_CLUSTER_NAME} \
 
 ### Install Operator SDK CLI
 
-You'll need to install the [Operator SDK CLI](https://sdk.operatorframework.io/docs/installation/).
+The [Operator SDK CLI](https://sdk.operatorframework.io/docs/installation/) needs to be installed on the machine being used for this process.
 
 ```
 # get platform information
