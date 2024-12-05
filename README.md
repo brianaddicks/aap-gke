@@ -122,10 +122,20 @@ export GKE_DB_ROOT_PASSWORD=YOUR_DATABASE_ROOT_PASSWORD
 gcloud services enable sqladmin.googleapis.com
 gcloud services enable servicenetworking.googleapis.com
 
-gcloud compute addresses create services \
+# create private peering for communication between GKE and Cloud SQL
+gcloud compute addresses create services-private-range \
+    --global \
     --purpose=VPC_PEERING \
-    --subnet=default
+    --addresses=192.168.0.0 \
+    --prefix-length=16 \
+    --network=default
 
+gcloud services vpc-peerings connect \
+  --service=servicenetworking.googleapis.com \
+  --ranges=services-private-range \
+  --network=default
+
+# deploy Cloud Sql instance
 gcloud sql instances create ${GKE_DB_INSTANCE} \
     --database-version=${GKE_DB_VERSION} \
     --cpu=2 \
@@ -134,6 +144,7 @@ gcloud sql instances create ${GKE_DB_INSTANCE} \
     --root-password=${GKE_DB_ROOT_PASSWORD} \
     --project=${GKE_PROJECT} \
     --no-assign-ip \
+    --network=default
 #    --enable-google-private-path \
 #    --network=projects/${GKE_PROJECT}/global/networks/default \
 #    --enable-private-service-connect \
