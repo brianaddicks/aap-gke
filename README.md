@@ -183,7 +183,7 @@ gcloud sql instances patch ${GKE_DB_INSTANCE}
 
 # disable public IP on SQL instance and enable client cert auth
 gcloud sql instances patch ${GKE_DB_INSTANCE} \
-    --no-assign-ip
+    --no-assign-ip \
     --ssl-mode=TRUSTED_CLIENT_CERTIFICATE_REQUIRED
 
 # might be cool to move this process to a container that you run before installing the operator (better yet the operator would do it...)
