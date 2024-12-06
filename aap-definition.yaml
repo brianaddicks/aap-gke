@@ -4,6 +4,7 @@ metadata:
   name: ansible
   namespace: aap-op
 spec:
+  hostname: 'ansible.$GKE_DNS_ZONE'
   service_type: LoadBalancer
   loadbalancer_protocol: http
   loadbalancer_port: 80
@@ -32,6 +33,8 @@ spec:
   database:
     postgres_data_volume_init: false
   controller:
+    hostname: 'ansible.$GKE_DNS_ZONE'
+    ee_pull_credentials_secret: ansible-default-ee-pull
     disabled: false
     security_context_settings:
       runAsGroup: 0
@@ -44,6 +47,7 @@ spec:
       - redhat-operators-pull-secret
     no_log: false
   eda:
+    hostname: 'ansible.$GKE_DNS_ZONE'
     disabled: false
     ingress_type: ingress
     no_log: true
@@ -74,6 +78,7 @@ spec:
     service_type: NodePort
     public_base_url: 'http://ansible.$GKE_DNS_ZONE'
   hub:
+    hostname: 'ansible.$GKE_DNS_ZONE'
     disabled: false
     nginx_proxy_send_timeout: 120s
     gunicorn_content_workers: 2
