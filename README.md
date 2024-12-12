@@ -144,7 +144,7 @@ gcloud sql instances create ${GKE_DB_INSTANCE} \
     --root-password=${GKE_DB_ROOT_PASSWORD} \
     --project=${GKE_PROJECT} \
     --network=default
-    --no-assign-ip \  # leaving this off for now, need a public IP to enable hstore extension from the install machine
+#    --no-assign-ip \  # leaving this off for now, need a public IP to enable hstore extension from the install machine
 #    --enable-google-private-path \
 #    --network=projects/${GKE_PROJECT}/global/networks/default \
 #    --enable-private-service-connect \
@@ -253,7 +253,7 @@ You'll need to download/install the [opm client](https://github.com/operator-fra
 
 ### Create a Catalog
 
-The catalog directory already has a working definiton for the AAP operator.
+The catalog directory in this repo has a working definiton for the AAP operator.
 It currently includes the following bundle versions.
 
 * 2.5-883
