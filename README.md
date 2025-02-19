@@ -331,7 +331,7 @@ kubectl create secret generic rhregistry \
 # create pull secret that will be used by the operator controllers
 kubectl create secret generic redhat-operators-pull-secret \
 --from-file=.dockerconfigjson=${XDG_RUNTIME_DIR}/containers/auth.json \
---type=kubernetes.io/dockerconfigjson -n aap-op
+--type=kubernetes.io/dockerconfigjson -n ${GKE_AAP_NAMESPACE}
 ```
 
 ### Make Catalog available on Cluster
